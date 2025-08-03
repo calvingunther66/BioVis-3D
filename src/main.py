@@ -1,5 +1,6 @@
 import sys
 import os
+import logging
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QWidget, QFileDialog, 
     QInputDialog, QMessageBox, QListWidget, QPushButton, QHBoxLayout, QDockWidget
@@ -103,25 +104,39 @@ class MainWindow(QMainWindow):
     def fetch_pdb(self):
         pdb_id, ok = QInputDialog.getText(self, 'Fetch PDB', 'Enter PDB ID:')
         if ok and pdb_id:
+            logging.info(f"Attempting to fetch PDB ID: {pdb_id}")
             self.statusBar().showMessage(f"Downloading PDB ID: {pdb_id}...")
             pdbl = PDBList()
             try:
                 file_path = pdbl.retrieve_pdb_file(pdb_id, pdir=".", file_format="pdb")
                 if os.path.exists(file_path):
+                    logging.info(f"Successfully downloaded PDB file to: {file_path}")
                     self.load_pdb(file_path, pdb_id)
                     self.statusBar().showMessage(f"Successfully loaded {pdb_id}", 5000)
                 else:
+                    logging.warning(f"PDB file not found after download attempt: {file_path}")
                     QMessageBox.warning(self, "Download Failed", f"Could not retrieve PDB file for ID: {pdb_id}")
                     self.statusBar().showMessage("Download failed", 5000)
             except Exception as e:
+                logging.error(f"Error fetching PDB ID {pdb_id}: {e}")
                 QMessageBox.warning(self, "Download Error", f"An error occurred: {e}")
                 self.statusBar().showMessage("Download failed", 5000)
 
     def load_pdb(self, file_path, name):
+        logging.info(f"Attempting to load PDB file: {file_path} with name: {name}")
+        # Check file size to prevent memory issues with large files
+        file_size = os.path.getsize(file_path)
+        if file_size > 100 * 1024 * 1024:  # 100 MB threshold
+            logging.warning(f"Attempted to load large PDB file ({file_size / (1024 * 1024):.2f} MB): {file_path}")
+            QMessageBox.warning(self, "Large File", "This PDB file is very large and may cause performance issues or crashes.")
+            return
+
         parser = PDBParser(QUIET=True)
         try:
             structure = parser.get_structure(name, file_path)
+            logging.info(f"Successfully parsed PDB structure for {name}")
         except Exception as e:
+            logging.error(f"Error parsing PDB file {file_path}: {e}")
             QMessageBox.warning(self, "File Error", f"Could not parse PDB file: {e}")
             return
 
@@ -131,6 +146,7 @@ class MainWindow(QMainWindow):
         self.scene_objects[name] = protein
         self.scene_list.addItem(name)
         self.plotter.reset_camera()
+        logging.info(f"Successfully loaded and displayed protein {name}")
 
     def generate_surface(self):
         selected_item = self.scene_list.currentItem()
@@ -174,6 +190,16 @@ class MainWindow(QMainWindow):
             self.scene_list.takeItem(self.scene_list.row(item))
 
 def main():
+    # Configure logging
+    logging.basicConfig(filename='biovis_log.txt', level=logging.INFO, 
+                        format='%(asctime)s - %(levelname)s - %(message)s', 
+                        filemode='w') # 'w' mode overwrites the log file each time
+
+    logging.info("BioVis-3D Application Started")
+    logging.info(f"Python Version: {sys.version}")
+    logging.info(f"Platform: {sys.platform}")
+    logging.info(f"Current Working Directory: {os.getcwd()}")
+
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
