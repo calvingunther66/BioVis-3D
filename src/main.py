@@ -1,4 +1,3 @@
-
 import sys
 import os
 from PyQt6.QtWidgets import (
@@ -7,7 +6,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt
-from pyvistaqt.qt_interactor import QtInteractor
+from pyvistaqt.plotting import QtInteractor
 import pyvista as pv
 from Bio.PDB import PDBParser, PDBList
 
@@ -19,12 +18,15 @@ class Protein:
         self.actor = None
         self.surface = None
 
+        centers = []
         for model in self.structure:
             for chain in model:
                 for residue in chain:
                     for atom in residue:
-                        sphere = pv.Sphere(center=atom.coord, radius=0.5)
-                        self.atoms.append(sphere)
+                        centers.append(atom.coord)
+        if centers:
+            spheres = pv.PolyData(centers).glyph(geom=pv.Sphere(radius=0.5), scale=False)
+            self.atoms.append(spheres)
 
 class MainWindow(QMainWindow):
     def __init__(self):
