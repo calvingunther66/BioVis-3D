@@ -1,4 +1,3 @@
 pyvista
 biopython
 pyvistaqt
-vtk==9.2.6

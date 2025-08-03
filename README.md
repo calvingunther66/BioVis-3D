@@ -11,6 +11,7 @@ BioVis-3D is an interactive tool for visualizing and manipulating macromolecular
 -   Generate and display the molecular surface of a protein.
 -   Export the generated surface as an `.stl` file.
 -   Scene manager to handle multiple objects in the 3D scene.
+-   Optimized rendering for large molecules.
 
 ## Installation
 
@@ -44,4 +45,5 @@ python src/main.py
 
 -   `pyvista`
 -   `biopython`
--   `PyQt6` (Note: This is implicitly required by PyVista's QtInteractor but not listed in `requirements.txt`)
+-   `pyvistaqt`
+-   `PyQt6`
