@@ -1,0 +1,4 @@
+2025-08-04 00:38:20,890 - INFO - BioVis-3D Application Started
+2025-08-04 00:38:20,890 - INFO - Python Version: 3.12.11 (main, Jul 29 2025, 18:21:07) [GCC 13.3.0]
+2025-08-04 00:38:20,890 - INFO - Platform: linux
+2025-08-04 00:38:20,890 - INFO - Current Working Directory: /app
