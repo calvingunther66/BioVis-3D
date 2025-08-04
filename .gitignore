@@ -1,3 +1,4 @@
 venv/
 *.pyc
 __pycache__/
+BioVis-3D/

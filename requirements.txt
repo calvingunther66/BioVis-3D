@@ -1,3 +1,4 @@
 pyvista
 biopython
 pyvistaqt
+PyQt6
