@@ -28,7 +28,11 @@ BioVis-3D is an interactive tool for visualizing and manipulating macromolecular
     python -m venv venv
     source venv/bin/activate
     ```
-4.  Install the dependencies:
+4.  Install Qt 6 development libraries. For Debian/Ubuntu-based systems, run:
+    ```bash
+    sudo apt-get update && sudo apt-get install -y qt6-base-dev
+    ```
+5.  Install the dependencies:
     ```bash
     pip install -r requirements.txt
     ```
